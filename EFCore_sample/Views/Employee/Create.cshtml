@@ -1,0 +1,30 @@
+﻿@model EFCore_sample.Models.Employee
+
+<form asp-action="Create" asp-area="Contacts" method="post">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label>Employee Name:</label>
+                <input asp-for="EmployeeName" type="text" class="form-control required" placeholder="Enter employee name" tabindex="1">
+            </div>
+            <div class="form-group">
+                <label>SkillSet:</label>
+                <input asp-for="Skill" type="text" class="form-control required" placeholder="Enter Skillset" tabindex="2">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input asp-for="Email" type="text" class="form-control required" placeholder="Enter email" tabindex="3">
+            </div>
+            <div class="form-group">
+                <label>Salary:</label>
+                <input asp-for="Salary" type="text" class="form-control required" placeholder="Enter Salary" tabindex="4">
+            </div>
+            <div class="card-footer">
+                <center>
+                    <button type="submit" class="btn btn-primary">Create Employee</button>
+                    <a asp-action="Index" asp-controller="Contacts" class="btn btn-secondary">Cancel</a>
+                </center>
+            </div>
+        </div>
+    </div>
+</form>
