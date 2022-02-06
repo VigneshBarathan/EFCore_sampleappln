@@ -20,5 +20,20 @@ namespace EFCore_sample.Models
                     = new List<Address>();
 
         public float Salary { get; set; }
+
+        [NotMapped]
+        public string Address { get; set; }
+
+        [NotMapped]
+        public List<Itemlist> EmployeesList { get; set; }
+    }
+
+    public class Itemlist
+    {
+        [NotMapped]
+        public string Text { get; set; }
+
+        [NotMapped]
+        public int Value { get; set; }
     }
 }

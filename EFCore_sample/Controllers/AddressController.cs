@@ -1,17 +1,30 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EFCore_sample.Contexts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore_sample.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EFCore_sample.Controllers
 {
     public class AddressController : Controller
     {
-        // GET: AddressController
-        public ActionResult Index()
+        private EmployeeDbContext _employeeDbContext;
+
+        public AddressController(EmployeeDbContext employeeDbContext)
         {
+            _employeeDbContext = employeeDbContext;
+        }
+        // GET: AddressController
+        public async Task<IActionResult> Index()
+        {
+            List<Employee> employees = new();
+            employees = await (from emp in _employeeDbContext.Employees select emp).ToListAsync();
+            //var empList =  _employeeDbContext.Employees.Select(x => new Itemlist { Value = x.Id, Text = x.EmployeeName }).ToList();
+            ViewBag.empList = employees;
             return View();
         }
 
@@ -42,8 +55,9 @@ namespace EFCore_sample.Controllers
             }
         }
 
+        [HttpGet]
         // GET: AddressController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             return View();
         }
@@ -51,10 +65,40 @@ namespace EFCore_sample.Controllers
         // POST: AddressController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(Employee employee)
         {
             try
             {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+
+                        var exist = _employeeDbContext.Addresses.Where(x => x.EmployeeId == employee.Id).FirstOrDefault();
+                        Address address = new();
+                        if (exist != null)
+                        {
+                            exist.EmployeeId = employee.Id;
+                            exist.AddressDetail = employee.Address;
+                             await _employeeDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            address.EmployeeId = employee.Id;
+                            address.AddressDetail = employee.Address;
+                            _employeeDbContext.Addresses.Add(address);
+                            await _employeeDbContext.SaveChangesAsync();
+
+                        }
+
+                        return RedirectToAction("Employee/Index");
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw ex;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch

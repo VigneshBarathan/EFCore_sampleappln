@@ -23,22 +23,59 @@ namespace EFCore_sample.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var contacts = await _employeeDbContext.Employees.ToListAsync();
-            var employeeList = (from o in _employeeDbContext.Employees
-                                join i in _employeeDbContext.Addresses
-                                on o.Id equals i.EmployeeId
-                                select new
-                                {
-                                    Id = o.Id,
-                                    EmployeeName = o.EmployeeName,
-                                    Skill = o.Skill,
-                                    Email = o.Email,
-                                    Salary = o.Salary,
-                                    Address = i.AddressDetail
-                                }
+            //var contacts = await _employeeDbContext.Employees.ToListAsync();
+            //var result = _employeeDbContext.Employees.Include(s => s.EmployeeAddress)
+            //        .ToListAsync<Employee>();
 
-                ).ToListAsync();
-            return View(contacts);
+            //Inner join
+            var employeeList = await _employeeDbContext.Employees.
+                      Join(_employeeDbContext.Addresses,
+                      o => o.Id,
+                      i => i.EmployeeId,
+                      (o, i) =>
+                      new Employee
+                      {
+                          Id = o.Id,
+                          EmployeeName = o.EmployeeName,
+                          Skill = o.Skill,
+                          Email = o.Email,
+                          Salary = o.Salary,
+                          Address = i.AddressDetail
+                      }).ToListAsync();
+            //var leftJoinemplist = await _employeeDbContext.Employees.
+            //                    Join(_employeeDbContext.Addresses.DefaultIfEmpty(),
+            //                    //p => p.Id,
+            //                    //b => b.EmployeeId,
+            //                    (p, b) =>
+            //                    new
+            //                    {
+            //                        Id = p.Id,
+            //                        EmployeeName = p.EmployeeName,
+            //                        Skill = p.Skill,
+            //                        Email = p.Email,
+            //                        Salary = p.Salary,
+            //                        Address = b.AddressDetail
+            //                    }).ToListAsync();
+
+            //Left Join
+            var a = _employeeDbContext.Employees.GroupJoin
+                  (_employeeDbContext.Addresses,
+                  employee => employee.Id,
+                  address => address.EmployeeId,
+                  (employee, address) => new { employee, address })
+                  .SelectMany(s => s.address.DefaultIfEmpty(),
+                              (s, address) =>
+                              new Employee
+                              {
+                                  Id = s.employee.Id,
+                                  EmployeeName=s.employee.EmployeeName,
+                                  Skill=s.employee.Skill,
+                                  Email=s.employee.Email,
+                                  Salary=s.employee.Salary,
+                                  Address=address.AddressDetail
+                                  //address
+                              }).ToList();
+            return View(a);
         }
 
         [HttpGet]
