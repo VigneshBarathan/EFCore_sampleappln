@@ -91,7 +91,7 @@ namespace EFCore_sample.Controllers
 
                         }
 
-                        return RedirectToAction("Employee/Index");
+                        return RedirectToAction("Index", "Employee");
                     }
                     catch (Exception ex)
                     {
