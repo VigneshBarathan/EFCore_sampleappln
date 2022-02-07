@@ -27,11 +27,11 @@
                         <td>@item.Email</td>
                         <td>@item.Salary</td>
                         <td>@item.Address</td>
-                        <td>
-                            <a asp-action="Edit" asp-controller="Employee" asp-route-id="@item.Id" class="btn btn-secondary">
+                        <td style="width:20%">
+                            <a asp-action="Edit" asp-controller="Employee" asp-route-id="@item.Id" class="btn btn-primary">
                                 Edit
                             </a>
-                            <a asp-action="Delete" asp-controller="Employee" asp-route-id="@item.Id" class="bnt btn-primary">
+                            <a asp-action="Delete" asp-controller="Employee" asp-route-id="@item.Id" class="btn btn-secondary">
                                 Delete
                             </a>
                         </td>
